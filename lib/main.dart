@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:kurs3_sabak8/city_ui.dart';
+import 'package:kurs3_sabak8/city_ui_with_model.dart';
 
 import 'package:kurs3_sabak8/weather_service.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData.dark(),
-      home: CityUI(),
+      home: CityUIWithModel(),
     );
   }
 }

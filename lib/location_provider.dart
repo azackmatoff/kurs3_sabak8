@@ -38,3 +38,5 @@ class LocationProvider {
     return await Geolocator.getCurrentPosition();
   }
 }
+
+final LocationProvider locationProvider = LocationProvider();

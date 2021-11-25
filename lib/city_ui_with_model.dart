@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kurs3_sabak8/city_screen.dart';
@@ -8,14 +10,14 @@ import 'package:kurs3_sabak8/weather_model.dart';
 import 'package:kurs3_sabak8/weather_service.dart';
 
 //Flutter StatefulWidget lifecycle
-class CityUI extends StatefulWidget {
-  const CityUI({Key key}) : super(key: key);
+class CityUIWithModel extends StatefulWidget {
+  const CityUIWithModel({Key key}) : super(key: key);
 
   @override
-  _CityUIState createState() => _CityUIState();
+  _CityUIWithModelState createState() => _CityUIWithModelState();
 }
 
-class _CityUIState extends State<CityUI> {
+class _CityUIWithModelState extends State<CityUIWithModel> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _cityNameController = TextEditingController();
@@ -23,10 +25,12 @@ class _CityUIState extends State<CityUI> {
 
   bool isLoading = false;
   Map<String, dynamic> _data;
-  int _tempCelcius = 0;
-  String _cityName = 'Bishkek';
+  // int _tempCelcius = 0;
+  // String _cityName = 'Bishkek';
   String weatherIcon;
   String weatherMessage;
+
+  WeatherModel _weatherModel;
 
   @override
   void initState() {
@@ -36,22 +40,23 @@ class _CityUIState extends State<CityUI> {
   }
 
   getLocation() async {
-    setState(() {
-      isLoading = true;
-    });
+    print('initState => getLocation()');
+    isLoading = true;
+
+    print('setState chakyrylgan jok => isLoading = true');
     final _position = await LocationProvider().getCurrentLocation();
     _data = await weatherService.getWeatherByLocation(_position);
 
-    double kelvin = _data['main']['temp'];
+    _weatherModel = WeatherModel.fromJson(_data);
 
-    _cityName = _data['name'];
-    _tempCelcius = (kelvin - 273.15).round();
-
-    print('_dataByLoc: ${_data['name']}');
+    print('_weatherModel: ${_weatherModel.cityName}');
     // await Future.delayed(Duration(seconds: 4));
+
     setState(() {
       isLoading = false;
     });
+
+    print('setState => isLoading = false');
   }
 
   @override
@@ -154,9 +159,11 @@ class _CityUIState extends State<CityUI> {
     super.deactivate();
   }
 
+  int _count = 0;
   @override
   Widget build(BuildContext context) {
-    print('build');
+    _count++;
+    log('build chakyryldy $_count and isLoading: $isLoading');
 
     return Scaffold(
       body: Scaffold(
@@ -191,9 +198,7 @@ class _CityUIState extends State<CityUI> {
                               _data = await weatherService
                                   .getWeatherByLocation(_pos);
 
-                              _cityName = _data['name'];
-                              double kelvin = _data['main']['temp'];
-                              _tempCelcius = (kelvin - 273.15).round();
+                              _weatherModel = WeatherModel.fromJson(_data);
 
                               setState(() {
                                 isLoading = false;
@@ -217,9 +222,6 @@ class _CityUIState extends State<CityUI> {
                                 ),
                               );
 
-                              print(
-                                  '_cityNameFromCityPage: ${_cityNameFromCityPage.runtimeType}');
-
                               if (_cityNameFromCityPage != null) {
                                 setState(() {
                                   isLoading = true;
@@ -227,9 +229,7 @@ class _CityUIState extends State<CityUI> {
                                 _data = await weatherService
                                     .getWeather(_cityNameFromCityPage);
 
-                                _cityName = _data['name'];
-                                double kelvin = _data['main']['temp'];
-                                _tempCelcius = (kelvin - 273.15).round();
+                                _weatherModel = WeatherModel.fromJson(_data);
 
                                 setState(() {
                                   isLoading = false;
@@ -248,38 +248,32 @@ class _CityUIState extends State<CityUI> {
                         child: Row(
                           children: <Widget>[
                             Text(
-                              _tempCelcius.toString(),
+                              _weatherModel.celcius.toString(),
                               style: kTempTextStyle,
-                            ), //Model menen ishtegen
-                            // Text(
-                            //   '$_celcius',
-                            //   style: kTempTextStyle,
-                            // ),  //Model jasabay tuz ishtoo
+                            ),
+
                             Text(
-                              '☀️',
+                              '${_weatherModel.icon}',
                               style: kConditionTextStyle,
                             ), //Model mn ishtoo
-                            // Text(
-                            //   weatherIcon ?? '☀️',
-                            //   style: kConditionTextStyle,
-                            // ),//Model jok ishtoo
                           ],
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(right: 15.0),
                         child: Text(
-                          'bugun jamgyr jaayt $_cityName',
+                          '${_weatherModel.message}',
                           textAlign: TextAlign.right,
                           style: kMessageTextStyle,
                         ),
-                        // Text(
-                        //   weatherMessage == null
-                        //       ? 'Weather in $_cityName'
-                        //       : '$weatherMessage in $_cityName',
-                        //   textAlign: TextAlign.right,
-                        //   style: kMessageTextStyle,
-                        // ), //Model jok ishtoo
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '${_weatherModel.cityName}',
+                          textAlign: TextAlign.right,
+                          style: kMessageTextStyle,
+                        ),
                       ),
                     ],
                   ),

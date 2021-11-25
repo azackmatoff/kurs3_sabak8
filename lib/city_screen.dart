@@ -43,6 +43,7 @@ class _CityScreenState extends State<CityScreen> {
                   ),
                   decoration: kTextFieldInputDecoration,
                   onChanged: (value) {
+                    print('value: $value');
                     cityName = value;
                     print('cityname: $cityName');
                   },

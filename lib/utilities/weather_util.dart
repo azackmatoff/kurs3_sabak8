@@ -1,4 +1,16 @@
 class WeatherUtil {
+  double intToDouble(dynamic val) {
+    if (val.runtimeType == double) {
+      return val;
+    } else if (val.runtimeType == int) {
+      return val.toDouble();
+    } else {
+      throw Exception("value is not of type 'int' or 'double' got type '" +
+          val.runtimeType.toString() +
+          "'");
+    }
+  }
+
   int kelvinToCelcius(double kelvin) {
     return (kelvin - 273.15).round();
   }
@@ -35,3 +47,5 @@ class WeatherUtil {
     }
   }
 }
+
+final WeatherUtil weatherUtil = WeatherUtil();

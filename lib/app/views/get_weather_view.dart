@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:kurs3_sabak8/utilities/constants.dart';
+import 'package:kurs3_sabak8/app/app_constants/app_text_styles.dart';
 
-class CityScreen extends StatefulWidget {
+class GetWeatherView extends StatefulWidget {
   @override
-  _CityScreenState createState() => _CityScreenState();
+  _GetWeatherViewState createState() => _GetWeatherViewState();
 }
 
-class _CityScreenState extends State<CityScreen> {
+class _GetWeatherViewState extends State<GetWeatherView> {
   String cityName;
 
   @override
@@ -41,7 +41,7 @@ class _CityScreenState extends State<CityScreen> {
                   style: TextStyle(
                     color: Colors.black,
                   ),
-                  decoration: kTextFieldInputDecoration,
+                  decoration: AppTextStyles.kTextFieldInputDecoration,
                   onChanged: (value) {
                     print('value: $value');
                     cityName = value;
@@ -55,7 +55,7 @@ class _CityScreenState extends State<CityScreen> {
                 },
                 child: Text(
                   'Get Weather',
-                  style: kButtonTextStyle,
+                  style: AppTextStyles.kButtonTextStyle,
                 ),
               ),
             ],

@@ -1,76 +1,45 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:kurs3_sabak8/city_screen.dart';
-import 'package:kurs3_sabak8/location_provider.dart';
-import 'package:kurs3_sabak8/progress_indicator.dart';
-import 'package:kurs3_sabak8/utilities/constants.dart';
-import 'package:kurs3_sabak8/weather_model.dart';
-import 'package:kurs3_sabak8/weather_service.dart';
+
+import 'package:kurs3_sabak8/app/app_constants/app_text_styles.dart';
+
+import 'package:kurs3_sabak8/app/view_models/city_view_model.dart';
+import 'package:kurs3_sabak8/app/views/get_weather_view.dart';
+import 'package:kurs3_sabak8/app/widgets/progress_indicator.dart';
 
 //Flutter StatefulWidget lifecycle
-class CityUIWithModel extends StatefulWidget {
-  const CityUIWithModel({Key key}) : super(key: key);
+class CityView extends StatefulWidget {
+  const CityView({Key key}) : super(key: key);
 
   @override
-  _CityUIWithModelState createState() => _CityUIWithModelState();
+  _CityViewState createState() => _CityViewState();
 }
 
-class _CityUIWithModelState extends State<CityUIWithModel> {
+class _CityViewState extends State<CityView> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _cityNameController = TextEditingController();
-  Position _position;
 
   bool isLoading = false;
-  Map<String, dynamic> _data;
-  // int _tempCelcius = 0;
-  // String _cityName = 'Bishkek';
-  String weatherIcon;
-  String weatherMessage;
-
-  WeatherModel _weatherModel;
 
   @override
   void initState() {
     super.initState();
-    print('initState');
-    getLocation();
+
+    getLocationAndWeather();
   }
 
-  getLocation() async {
-    print('initState => getLocation()');
-    isLoading = true;
+  getLocationAndWeather() async {
+    setState(() {
+      isLoading = true;
+    });
 
-    print('setState chakyrylgan jok => isLoading = true');
-    final _position = await LocationProvider().getCurrentLocation();
-    _data = await weatherService.getWeatherByLocation(_position);
-
-    _weatherModel = WeatherModel.fromJson(_data);
-
-    print('_weatherModel: ${_weatherModel.cityName}');
-    // await Future.delayed(Duration(seconds: 4));
+    await cityViewModel.getLocationAndWeather();
 
     setState(() {
       isLoading = false;
     });
-
-    print('setState => isLoading = false');
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    //kodtor astinda jazilish kerke
-    // getCurrentLocationV2();
-    // showSnackbar();
-    //contest aluu uchun kutkonu jardam beret
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _showMyDialog();
-    // });
-
-    print('didChangeDependencies');
   }
 
   void showSnackbar() {
@@ -193,12 +162,8 @@ class _CityUIWithModelState extends State<CityUIWithModel> {
                               setState(() {
                                 isLoading = true;
                               });
-                              final Position _pos =
-                                  await locationProvider.getCurrentLocation();
-                              _data = await weatherService
-                                  .getWeatherByLocation(_pos);
 
-                              _weatherModel = WeatherModel.fromJson(_data);
+                              await cityViewModel.getLocationAndWeather();
 
                               setState(() {
                                 isLoading = false;
@@ -217,7 +182,7 @@ class _CityUIWithModelState extends State<CityUIWithModel> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) {
-                                    return CityScreen();
+                                    return GetWeatherView();
                                   },
                                 ),
                               );
@@ -226,10 +191,9 @@ class _CityUIWithModelState extends State<CityUIWithModel> {
                                 setState(() {
                                   isLoading = true;
                                 });
-                                _data = await weatherService
-                                    .getWeather(_cityNameFromCityPage);
 
-                                _weatherModel = WeatherModel.fromJson(_data);
+                                await cityViewModel.getWeatherByCityname(
+                                    _cityNameFromCityPage);
 
                                 setState(() {
                                   isLoading = false;
@@ -248,13 +212,13 @@ class _CityUIWithModelState extends State<CityUIWithModel> {
                         child: Row(
                           children: <Widget>[
                             Text(
-                              _weatherModel.celcius.toString(),
-                              style: kTempTextStyle,
+                              cityViewModel.getWeatherModel.celcius.toString(),
+                              style: AppTextStyles.kTempTextStyle,
                             ),
 
                             Text(
-                              '${_weatherModel.icon}',
-                              style: kConditionTextStyle,
+                              '${cityViewModel.getWeatherModel.icon}',
+                              style: AppTextStyles.kConditionTextStyle,
                             ), //Model mn ishtoo
                           ],
                         ),
@@ -262,17 +226,17 @@ class _CityUIWithModelState extends State<CityUIWithModel> {
                       Padding(
                         padding: EdgeInsets.only(right: 15.0),
                         child: Text(
-                          '${_weatherModel.message}',
+                          '${cityViewModel.getWeatherModel.message}',
                           textAlign: TextAlign.right,
-                          style: kMessageTextStyle,
+                          style: AppTextStyles.kMessageTextStyle,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          '${_weatherModel.cityName}',
+                          '${cityViewModel.getWeatherModel.cityName}',
                           textAlign: TextAlign.right,
-                          style: kMessageTextStyle,
+                          style: AppTextStyles.kMessageTextStyle,
                         ),
                       ),
                     ],

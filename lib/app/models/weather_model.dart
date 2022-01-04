@@ -1,8 +1,8 @@
-import 'package:kurs3_sabak8/utilities/weather_util.dart';
-
 // Model menen ishtoo
 // ozuncho data turu jasap alabiz, class, model, object
 // OOP = Object Oriented Programming
+
+import 'package:kurs3_sabak8/app/utilities/weather_util.dart';
 
 class WeatherModel {
   final String cityName;

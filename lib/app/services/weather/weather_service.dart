@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:kurs3_sabak8/utilities/constants.dart';
+import 'package:kurs3_sabak8/app/app_constants/app_constants.dart';
 
 class WeatherService {
   Future<Map<String, dynamic>> getWeatherByLocation(Position position) async {
     try {
       final String url =
-          '$baseApiUrl?lat=${position.latitude}&lon=${position.longitude}&appid=$apiKey';
+          '${AppConstants.baseApiUrl}?lat=${position.latitude}&lon=${position.longitude}&appid=${AppConstants.apiKey}';
       // print('url: $url');
       final Uri uri = Uri.parse(url);
 
@@ -25,9 +25,10 @@ class WeatherService {
     }
   }
 
-  Future<Map<String, dynamic>> getWeather(String city) async {
+  Future<Map<String, dynamic>> getWeatherByCityName(String city) async {
     try {
-      final String url = '$baseApiUrl?q=$city&appid=$apiKey';
+      final String url =
+          '${AppConstants.baseApiUrl}?q=$city&appid=${AppConstants.apiKey}';
       final Uri uri = Uri.parse(url);
 
       final http.Response response = await http.get(uri);

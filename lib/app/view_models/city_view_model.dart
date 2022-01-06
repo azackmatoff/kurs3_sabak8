@@ -1,4 +1,3 @@
-import 'package:geolocator/geolocator.dart';
 import 'package:kurs3_sabak8/app/models/weather_model.dart';
 import 'package:kurs3_sabak8/app/repositories/location/location_repo.dart';
 import 'package:kurs3_sabak8/app/repositories/weather/weather_repo.dart';
